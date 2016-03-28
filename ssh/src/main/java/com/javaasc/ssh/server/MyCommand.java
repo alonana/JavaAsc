@@ -1,4 +1,4 @@
-package com.javaasc.ssh;
+package com.javaasc.ssh.server;
 
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;

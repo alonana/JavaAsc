@@ -1,4 +1,4 @@
-package com.javaasc.ssh;
+package com.javaasc.ssh.server;
 
 import org.apache.sshd.server.auth.password.PasswordAuthenticator;
 import org.apache.sshd.server.auth.password.PasswordChangeRequiredException;
