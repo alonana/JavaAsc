@@ -72,6 +72,7 @@ public class Shell {
             logger.debug("pending output done: {}", text);
             if (text != null) {
                 connector.getOutputStream().write(text.getBytes());
+                connector.getOutputStream().flush();
             }
         }
     }

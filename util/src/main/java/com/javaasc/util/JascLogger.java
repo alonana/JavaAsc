@@ -16,7 +16,6 @@ public class JascLogger {
 
     public void debug(String message, Object... parameters) {
         logger.debug(message, parameters);
-        System.out.println("==" + message);
     }
 
     public void warn(String message, Throwable e) {

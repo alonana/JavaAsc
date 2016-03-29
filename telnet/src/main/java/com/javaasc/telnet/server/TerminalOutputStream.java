@@ -17,4 +17,9 @@ public class TerminalOutputStream extends OutputStream {
     public void write(int i) throws IOException {
         terminalIO.write((byte) i);
     }
+
+    @Override
+    public void flush() throws IOException {
+        terminalIO.flush();
+    }
 }

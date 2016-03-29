@@ -21,6 +21,7 @@
         <module>ssh</module>
         <module>telnet</module>
         <module>shell</module>
+        <module>entity</module>
         <module>container</module>
     </modules>
 
