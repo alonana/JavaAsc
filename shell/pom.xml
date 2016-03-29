@@ -11,15 +11,10 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>ssh</artifactId>
+    <artifactId>shell</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <artifactId>shell</artifactId>
-            <groupId>com.javasc</groupId>
-            <version>${javaasc-version}</version>
-        </dependency>
         <dependency>
             <artifactId>util</artifactId>
             <groupId>com.javasc</groupId>
@@ -30,16 +25,6 @@
             <groupId>com.javasc</groupId>
             <version>${javaasc-version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sshd</groupId>
-            <artifactId>sshd-core</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.53</version>
         </dependency>
     </dependencies>
 

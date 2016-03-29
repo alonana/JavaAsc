@@ -1,5 +1,7 @@
 package com.javaasc.ssh.server;
 
+import com.javaasc.shell.api.ShellConnectionImpl;
+import com.javaasc.util.JascLogger;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
@@ -8,22 +10,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class MyCommand implements Command, Runnable {
-    private InputStream inputStream;
-    private OutputStream outputStream;
-    private OutputStream errorStream;
+public class JascSshCommand implements Command, Runnable {
+    private static final JascLogger logger = JascLogger.getLogger(JascSshCommand.class);
+
+    private final JascSshServer jascSshServer;
+    private InputStream in;
+    private OutputStream out;
+    private OutputStream err;
     private ExitCallback exitCallback;
 
+    public JascSshCommand(JascSshServer jascSshServer) {
+        this.jascSshServer = jascSshServer;
+    }
+
     public void setInputStream(InputStream inputStream) {
-        this.inputStream = inputStream;
+        this.in = inputStream;
     }
 
     public void setOutputStream(OutputStream outputStream) {
-        this.outputStream = outputStream;
+        this.out = outputStream;
     }
 
     public void setErrorStream(OutputStream errorStream) {
-        this.errorStream = errorStream;
+        this.err = errorStream;
     }
 
     public void setExitCallback(ExitCallback exitCallback) {
@@ -35,24 +44,15 @@ public class MyCommand implements Command, Runnable {
     }
 
     public void destroy() throws Exception {
-        System.out.println("command started");
+        logger.debug("command destroy");
     }
 
     public void run() {
         try {
-            outputStream.write("Welcome\n".getBytes());
-
-            System.out.println("command started");
-            byte[] buffer = new byte[1024];
-            while (true) {
-                System.out.println("read1");
-                int n = inputStream.read(buffer);
-                System.out.println("read2");
-                outputStream.write(buffer, 0, n);
-                outputStream.flush();
-            }
+            ShellConnectionImpl connection = new ShellConnectionImpl(in, out, err);
+            jascSshServer.handle(connection);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.warn("handling SSH connection failed",e);
         }
     }
 }

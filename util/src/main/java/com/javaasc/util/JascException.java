@@ -1,6 +1,6 @@
 package com.javaasc.util;
 
-public class JascException extends Exception {
+public class JascException extends RuntimeException {
     public JascException(String message) {
         super(message);
     }
