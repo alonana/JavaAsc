@@ -6,7 +6,7 @@ import com.javaasc.util.CollectionUtil;
 
 public class OperationListOperations {
     @SuppressWarnings("unused")
-    @JascOperation
+    @JascOperation(shortDescription = "list all available commands")
     public String listOperations() {
         return CollectionUtil.getNiceList(ClassAnalyzer.INSTANCE.getOperationsNames());
     }

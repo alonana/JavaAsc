@@ -5,7 +5,7 @@ import com.javaasc.util.TimeUtil;
 
 public class OperationDate {
     @SuppressWarnings("unused")
-    @JascOperation
+    @JascOperation(shortDescription = "show the current date and time")
     public String date() throws Exception {
         return TimeUtil.getTimeCurrent(false);
     }

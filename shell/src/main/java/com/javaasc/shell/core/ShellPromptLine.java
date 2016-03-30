@@ -25,7 +25,7 @@ public class ShellPromptLine {
         cursorPosition++;
     }
 
-    public String getCommand() {
+    public String getCommandLine() {
         StringBuilder command = new StringBuilder();
         for (Character c : text) {
             command.append(c);
@@ -48,7 +48,7 @@ public class ShellPromptLine {
     }
 
     public String getAll() {
-        return prompt + getCommand();
+        return prompt + getCommandLine();
     }
 
     public void right() {

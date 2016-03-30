@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface JascOperation {
-    String name() default EMPTY;
-    String shortDescription() default EMPTY;
+@Target(ElementType.PARAMETER)
+public @interface JascOption {
+    String[] names();
+
+    String description() default EMPTY;
 
     static String EMPTY = "overcome java non support for null default";
 }

@@ -15,7 +15,7 @@ public enum ClassAnalyzer {
 
     private static final JascLogger logger = JascLogger.getLogger(ClassAnalyzer.class);
 
-    private HashMap<String, Method> operations = new HashMap<String, Method>();
+    private HashMap<String, MethodInformation> operations = new HashMap<>();
 
     public List<String> getOperationsNames() {
         List<String> names = new LinkedList<String>();
@@ -33,28 +33,24 @@ public enum ClassAnalyzer {
     }
 
     private void addMethod(Method method) {
-        JascOperation annotation = method.getAnnotation(JascOperation.class);
-        String name = annotation.name();
-        if (name.equals(JascOperation.USE_METHOD_NAME)) {
-            name = method.getName();
-        }
-        Method existing = operations.get(name);
+        MethodInformation information = new MethodInformation(method);
+        MethodInformation existing = operations.get(information.getName());
         if (existing != null) {
-            throw new JascException("duplicate methods using the same name '" + name
-                    + "' located: " + existing.getClass().getName() + ", " + method.getDeclaringClass().getName());
+            throw new JascException("duplicate methods using the same name '" + information.getName()
+                    + "' located: " + existing.getMethod().getDeclaringClass().getName() + ", " +
+                    method.getDeclaringClass().getName());
         }
-        operations.put(name, method);
-        logger.debug("operation {} added for {}.{}", name, method.getClass().getName(), method.getName());
+        operations.put(information.getName(), information);
+        logger.debug("operation {} added for {}.{}",
+                information.getName(), method.getClass().getName(), method.getName());
     }
 
-    public String execute(String command) throws Exception {
-        command = command.trim();
-        Method method = operations.get(command);
-        if (method == null) {
+    public String execute(Arguments arguments) throws Exception {
+        String command = arguments.getCommand();
+        MethodInformation methodInformation = operations.get(command);
+        if (methodInformation == null) {
             throw new JascException("command not found: " + command);
         }
-        Object o = method.getDeclaringClass().newInstance();
-        Object result = method.invoke(o);
-        return result.toString();
+        return methodInformation.execute(arguments);
     }
 }

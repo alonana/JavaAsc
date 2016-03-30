@@ -1,6 +1,8 @@
 package com.javaasc.shell.core;
 
 import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.com.javaasc.entity.core.Arguments;
+import com.javaasc.shell.core.command.CommandParser;
 import com.javaasc.util.JascException;
 import com.javaasc.util.JascLogger;
 
@@ -17,15 +19,20 @@ public class CommandRunner {
 
     public void execute() throws Exception {
         shell.addText("\r\n");
-        String command = promptLine.getCommand();
         String result;
+        String commandLine = promptLine.getCommandLine().trim();
+        promptLine.clear();
+        if (commandLine.isEmpty()){
+            return;
+        }
         try {
-            result = ClassAnalyzer.INSTANCE.execute(command) + "\r\n";
+            Arguments arguments = new CommandParser(commandLine).getArguments();
+            String command = arguments.getCommand();
+            result = ClassAnalyzer.INSTANCE.execute(arguments) + "\r\n";
         } catch (Exception e) {
-            logger.warn("command " + command + " run failed", e);
+            logger.warn("command " + commandLine + " run failed", e);
             result = JascException.getStackTrace(e);
         }
         shell.addText(result);
-        promptLine.clear();
     }
 }
