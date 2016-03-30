@@ -5,7 +5,9 @@ import com.javaasc.util.JascException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 public class MethodInformation {
@@ -62,5 +64,9 @@ public class MethodInformation {
         Object o = method.getDeclaringClass().newInstance();
         Object result = method.invoke(o, parameters);
         return result.toString();
+    }
+
+    public Collection<String> getOptionsNames() {
+        return new HashSet<>(options.keySet());
     }
 }

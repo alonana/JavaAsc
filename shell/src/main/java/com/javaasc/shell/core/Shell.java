@@ -8,11 +8,11 @@ public class Shell {
 
     private final ShellConnection connector;
     private final Object mutex;
+    private final EscapeHandlingStream inputStream;
     private boolean running = true;
     private boolean closed = false;
     private ShellPendingOutput pendingOutput;
     private ShellPromptLine promptLine;
-    private final EscapeHandlingStream inputStream;
 
     public Shell(ShellConnection connector) throws Exception {
         this.connector = connector;
@@ -115,7 +115,8 @@ public class Shell {
             logger.debug("read starting");
             int c = inputStream.read();
             handleReadChar(c);
-            addText("\r" + promptLine.getAll() + promptLine.getBackwardString());
+            // print and delete additional char to delete additional char for backspace handling
+            addText("\r" + promptLine.getAll() + " " + promptLine.getBackwardString() + '\b');
         }
         logger.debug("reader thread done");
     }

@@ -6,15 +6,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class EscapeHandlingStream {
-    private static final JascLogger logger = JascLogger.getLogger(EscapeHandlingStream.class);
-
     public static final int BACKSPACE = 1303;
     public static final int RIGHT = 1003;
     public static final int LEFT = 1004;
     public static final int TAB = 1301;
     public static final int ENTER = 10;
     public static final String BEEP = "\uD83D\uDD14";
-
+    private static final JascLogger logger = JascLogger.getLogger(EscapeHandlingStream.class);
     private InputStream inputStream;
 
 
@@ -40,6 +38,9 @@ public class EscapeHandlingStream {
                     return LEFT;
                 }
             }
+        }
+        if (c == 8) {
+            return BACKSPACE;
         }
         if (c == '\t') {
             return TAB;

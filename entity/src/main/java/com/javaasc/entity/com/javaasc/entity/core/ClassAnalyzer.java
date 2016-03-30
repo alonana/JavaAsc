@@ -53,4 +53,8 @@ public enum ClassAnalyzer {
         }
         return methodInformation.execute(arguments);
     }
+
+    public MethodInformation getOperation(String operation) {
+        return operations.get(operation);
+    }
 }

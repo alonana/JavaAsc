@@ -3,20 +3,23 @@ package com.javaasc.shell.core.command;
 import com.javaasc.entity.com.javaasc.entity.core.Arguments;
 import com.javaasc.util.JascException;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class CommandParser {
-    private Arguments arguments;
+    private LinkedList<String> rawArguments;
 
-    public CommandParser(String commandLine) throws Exception {
+    public CommandParser(String commandLine, boolean completion) throws Exception {
+        rawArguments = new LinkedList<>();
         if (commandLine == null || commandLine.length() == 0) {
+            if (completion) {
+                return;
+            }
             throw new JascException("empty command line");
         }
 
         CommandParserState state = CommandParserState.NORMAL;
         StringTokenizer tokenizer = new StringTokenizer(commandLine, "\"'\\ ", true);
-        ArrayList<String> result = new ArrayList<>();
         StringBuilder current = new StringBuilder();
         boolean lastTokenHasBeenQuoted = false;
 
@@ -58,7 +61,7 @@ public class CommandParser {
                         state = CommandParserState.IN_DOUBLE_QUOTE;
                     } else if (" ".equals(nextTok)) {
                         if (lastTokenHasBeenQuoted || current.length() != 0) {
-                            result.add(current.toString());
+                            rawArguments.add(current.toString());
                             current.setLength(0);
                         }
                     } else {
@@ -69,23 +72,29 @@ public class CommandParser {
             }
         }
         if (lastTokenHasBeenQuoted || current.length() != 0) {
-            result.add(current.toString());
+            rawArguments.add(current.toString());
         }
         if (state == CommandParserState.IN_QUOTE || state == CommandParserState.IN_DOUBLE_QUOTE) {
+            if (completion) {
+                return;
+            }
             throw new JascException("quotes error for " + commandLine);
         }
-        arguments = new Arguments(result);
+    }
+
+    public LinkedList<String> getRawArguments() {
+        return rawArguments;
+    }
+
+    public Arguments getArguments() throws Exception {
+        return new Arguments(rawArguments);
     }
 
     @Override
     public String toString() {
         return "CommandParser{" +
-                "arguments=" + arguments +
+                "rawArguments=" + rawArguments +
                 '}';
-    }
-
-    public Arguments getArguments() {
-        return arguments;
     }
 
 }
