@@ -3,22 +3,20 @@ package com.javaasc.shell.core;
 import com.javaasc.shell.api.ShellConnection;
 import com.javaasc.util.JascLogger;
 
-import java.util.LinkedList;
-
 public class Shell {
     private static final JascLogger logger = JascLogger.getLogger(Shell.class);
 
     private final ShellConnection connector;
     private final Object mutex;
     private boolean running = true;
+    private boolean closed = false;
     private ShellPendingOutput pendingOutput;
-    private LinkedList<Character> printedText;
-    private int cursorPosition;
+    private ShellPromptLine promptLine;
 
     public Shell(ShellConnection connector) {
         this.connector = connector;
         mutex = new Object();
-        printedText = new LinkedList<Character>();
+        promptLine = new ShellPromptLine("JASC>");
         pendingOutput = new ShellPendingOutput();
         ShellReader reader = new ShellReader(this);
         ShellWriter writer = new ShellWriter(this);
@@ -29,6 +27,7 @@ public class Shell {
     public void handle() throws Exception {
         logger.debug("Shell starting");
         addText("Welcome to JASC\r\n");
+        addText(promptLine.getAll());
         while (running) {
             synchronized (mutex) {
                 mutex.wait();
@@ -36,33 +35,46 @@ public class Shell {
         }
     }
 
-    public void readerThread() {
-        logger.debug("reader thread starting");
+    void readerThread() {
         try {
+            logger.debug("reader thread starting");
             readerThreadWrapped();
+            logger.debug("reader thread done");
+            close(true);
         } catch (Throwable e) {
             logger.warn("read failed", e);
         }
-        close();
     }
 
-    public void writerThread() {
-        logger.debug("writer thread starting");
+    void writerThread() {
         try {
+            logger.debug("writer thread starting");
             writerThreadWrapped();
+            logger.debug("writer thread done");
+            close(false);
         } catch (Throwable e) {
             logger.warn("write failed", e);
         }
-        close();
     }
 
-    private void close() {
-        logger.debug("closing shell");
+    private void close(boolean onlyNotify) throws Exception {
         running = false;
         pendingOutput.stop();
         synchronized (mutex) {
             mutex.notifyAll();
         }
+        if (onlyNotify) {
+            return;
+        }
+        if (closed) {
+            logger.debug("shell already closed");
+            return;
+        }
+        closed = true;
+        logger.debug("closing shell");
+        connector.getInputStream().close();
+        connector.getOutputStream().close();
+        connector.getErrorStream().close();
     }
 
     private void writerThreadWrapped() throws Exception {
@@ -77,7 +89,7 @@ public class Shell {
         }
     }
 
-    public void addText(String text) {
+    private void addText(String text) {
         pendingOutput.addText(text);
     }
 
@@ -85,15 +97,51 @@ public class Shell {
         while (running) {
             logger.debug("read starting");
             int c = connector.getInputStream().read();
-            logger.debug("read done: {}", c);
-            if (c == -1) {
-                logger.debug("reader EOF");
-                return;
-            }
-            Character character = (char) c;
-            printedText.add(cursorPosition, character);
-            addText(character.toString());
+            handleReadChar(c);
         }
+    }
+
+    private void handleReadChar(int c) throws Exception {
+        logger.debug("read done: int {} char {}", c, (char) c);
+        if (c == -1) {
+            logger.debug("reader EOF");
+            close(true);
+            return;
+        }
+
+        if (c == 1003) {
+            promptLine.right();
+            return;
+        }
+        if (c == 1004) {
+            promptLine.left();
+            return;
+        }
+
+        if (c == 1301 || c == '\t') {
+            addText("\r\n");
+            String command = promptLine.getCommand();
+            addText("complete in progress for: " + command + "\r\n");
+            addText(promptLine.getAll());
+            return;
+        }
+        if (c == '\n' || c == '\r') {
+            addText("\r\n");
+            String command = promptLine.getCommand();
+            promptLine.clear();
+            addText("running command: " + command + "\r\n");
+            addText(promptLine.getAll());
+            return;
+        }
+        if (c == 'X') {
+            addText("BYE\r\n");
+            close(true);
+            return;
+        }
+
+        char character = (char) c;
+        promptLine.add(character);
+        addText(Character.toString(character));
     }
 
 }

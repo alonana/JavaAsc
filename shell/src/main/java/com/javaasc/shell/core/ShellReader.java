@@ -8,6 +8,6 @@ public class ShellReader implements Runnable {
     }
 
     public void run() {
-shell.readerThread();
+        shell.readerThread();
     }
 }

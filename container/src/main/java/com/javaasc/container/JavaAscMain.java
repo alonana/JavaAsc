@@ -1,5 +1,6 @@
 package com.javaasc.container;
 
+import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.shell.api.ShellConnection;
 import com.javaasc.shell.api.ShellConnectionHandler;
 import com.javaasc.shell.core.Shell;
@@ -16,6 +17,9 @@ public class JavaAscMain implements ShellConnectionHandler {
 
     public void run() throws Exception {
         logger.info("Java ASC starting");
+
+        ClassAnalyzer.INSTANCE.analyzeClass(ListOperations.class);
+
 
         logger.debug("starting connectors");
         JascSshServer sshServer = new JascSshServer(this);

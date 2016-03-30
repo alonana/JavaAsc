@@ -12,12 +12,9 @@ public class JascTelnetClient {
     private InputStream inputStream;
     private OutputStream outputStream;
 
-    public JascTelnetClient(String host, int port) {
+    public JascTelnetClient(String host, int port) throws Exception {
         this.host = host;
         this.port = port;
-    }
-
-    public void connect() throws Exception {
         client = new TelnetClient();
         client.connect(host, port);
         inputStream = client.getInputStream();
