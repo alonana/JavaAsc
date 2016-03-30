@@ -41,9 +41,20 @@ public enum ClassAnalyzer {
         Method existing = operations.get(name);
         if (existing != null) {
             throw new JascException("duplicate methods using the same name '" + name
-                    + "' located: " + existing.getClass().getName() + ", " + method.getClass().getName());
+                    + "' located: " + existing.getClass().getName() + ", " + method.getDeclaringClass().getName());
         }
         operations.put(name, method);
         logger.debug("operation {} added for {}.{}", name, method.getClass().getName(), method.getName());
+    }
+
+    public String execute(String command) throws Exception {
+        command = command.trim();
+        Method method = operations.get(command);
+        if (method == null) {
+            throw new JascException("command not found: " + command);
+        }
+        Object o = method.getDeclaringClass().newInstance();
+        Object result = method.invoke(o);
+        return result.toString();
     }
 }

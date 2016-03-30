@@ -1,5 +1,8 @@
 package com.javaasc.container;
 
+import com.javaasc.container.operations.OperationDate;
+import com.javaasc.container.operations.OperationInfo;
+import com.javaasc.container.operations.OperationListOperations;
 import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.shell.api.ShellConnection;
 import com.javaasc.shell.api.ShellConnectionHandler;
@@ -18,7 +21,9 @@ public class JavaAscMain implements ShellConnectionHandler {
     public void run() throws Exception {
         logger.info("Java ASC starting");
 
-        ClassAnalyzer.INSTANCE.analyzeClass(ListOperations.class);
+        ClassAnalyzer.INSTANCE.analyzeClass(OperationListOperations.class);
+        ClassAnalyzer.INSTANCE.analyzeClass(OperationInfo.class);
+        ClassAnalyzer.INSTANCE.analyzeClass(OperationDate.class);
 
 
         logger.debug("starting connectors");

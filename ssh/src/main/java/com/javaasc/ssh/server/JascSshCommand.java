@@ -23,36 +23,43 @@ public class JascSshCommand implements Command, Runnable {
         this.jascSshServer = jascSshServer;
     }
 
+    @Override
     public void setInputStream(InputStream inputStream) {
         this.in = inputStream;
     }
 
+    @Override
     public void setOutputStream(OutputStream outputStream) {
         this.out = outputStream;
     }
 
+    @Override
     public void setErrorStream(OutputStream errorStream) {
         this.err = errorStream;
     }
 
+    @Override
     public void setExitCallback(ExitCallback exitCallback) {
         this.exitCallback = exitCallback;
     }
 
+    @Override
     public void start(Environment environment) throws IOException {
         new Thread(this).start();
     }
 
+    @Override
     public void destroy() throws Exception {
         logger.debug("command destroy");
     }
 
+    @Override
     public void run() {
         try {
             ShellConnectionImpl connection = new ShellConnectionImpl(in, out, err);
             jascSshServer.handle(connection);
         } catch (Exception e) {
-            logger.warn("handling SSH connection failed",e);
+            logger.warn("handling SSH connection failed", e);
         }
     }
 }

@@ -14,7 +14,6 @@ public class JascSshServer {
         this.handler = handler;
     }
 
-    //TODO: allow to configure port, and security, see https://mina.apache.org/sshd-project/configuring_security.html
     public void start() throws Exception {
         SshServer server = SshServer.setUpDefaultServer();
         server.setPasswordAuthenticator(new MyPaswordAuthenticator());

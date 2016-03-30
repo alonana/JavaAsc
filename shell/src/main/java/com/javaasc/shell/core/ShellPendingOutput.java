@@ -1,8 +1,12 @@
 package com.javaasc.shell.core;
 
+import com.javaasc.util.JascLogger;
+
 import java.util.LinkedList;
 
 public class ShellPendingOutput {
+    private static final JascLogger logger = JascLogger.getLogger(ShellPendingOutput.class);
+
     private final LinkedList<String> pendingText;
     private final Object mutex;
     private boolean running;
@@ -14,6 +18,7 @@ public class ShellPendingOutput {
     }
 
     public void addText(String text) {
+        logger.debug("adding text for print {}", text);
         synchronized (mutex) {
             pendingText.add(text);
             mutex.notifyAll();

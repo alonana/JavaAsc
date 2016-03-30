@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <artifactId>entity</artifactId>
+            <groupId>com.javasc</groupId>
+            <version>${javaasc-version}</version>
+        </dependency>
+        <dependency>
             <artifactId>util</artifactId>
             <groupId>com.javasc</groupId>
             <version>${javaasc-version}</version>

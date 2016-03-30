@@ -12,12 +12,14 @@ public class Shell {
     private boolean closed = false;
     private ShellPendingOutput pendingOutput;
     private ShellPromptLine promptLine;
+    private final EscapeHandlingStream inputStream;
 
-    public Shell(ShellConnection connector) {
+    public Shell(ShellConnection connector) throws Exception {
         this.connector = connector;
         mutex = new Object();
         promptLine = new ShellPromptLine("JASC>");
         pendingOutput = new ShellPendingOutput();
+        inputStream = new EscapeHandlingStream(connector.getInputStream());
         ShellReader reader = new ShellReader(this);
         ShellWriter writer = new ShellWriter(this);
         new Thread(reader).start();
@@ -37,12 +39,11 @@ public class Shell {
 
     void readerThread() {
         try {
-            logger.debug("reader thread starting");
             readerThreadWrapped();
-            logger.debug("reader thread done");
-            close(true);
         } catch (Throwable e) {
             logger.warn("read failed", e);
+        } finally {
+            closeIgnored(true);
         }
     }
 
@@ -51,9 +52,18 @@ public class Shell {
             logger.debug("writer thread starting");
             writerThreadWrapped();
             logger.debug("writer thread done");
-            close(false);
         } catch (Throwable e) {
             logger.warn("write failed", e);
+        } finally {
+            closeIgnored(false);
+        }
+    }
+
+    private void closeIgnored(boolean onlyNotify) {
+        try {
+            close(onlyNotify);
+        } catch (Exception e) {
+            logger.warn("ignoring close error ", e);
         }
     }
 
@@ -72,65 +82,70 @@ public class Shell {
         }
         closed = true;
         logger.debug("closing shell");
-        connector.getInputStream().close();
+        inputStream.close();
         connector.getOutputStream().close();
         connector.getErrorStream().close();
     }
 
     private void writerThreadWrapped() throws Exception {
+        logger.debug("writer thread starting");
         while (running) {
             logger.debug("pending output starting");
             String text = pendingOutput.getText();
             logger.debug("pending output done: {}", text);
             if (text != null) {
-                connector.getOutputStream().write(text.getBytes());
+                if (text.equals(EscapeHandlingStream.BEEP)) {
+                    connector.getOutputStream().write(7);
+                } else {
+                    connector.getOutputStream().write(text.getBytes());
+                }
                 connector.getOutputStream().flush();
             }
         }
+        logger.debug("writer thread done");
     }
 
-    private void addText(String text) {
+    public void addText(String text) {
         pendingOutput.addText(text);
     }
 
     private void readerThreadWrapped() throws Exception {
+        logger.debug("reader thread starting");
         while (running) {
             logger.debug("read starting");
-            int c = connector.getInputStream().read();
+            int c = inputStream.read();
             handleReadChar(c);
+            addText("\r" + promptLine.getAll() + promptLine.getBackwardString());
         }
+        logger.debug("reader thread done");
     }
 
     private void handleReadChar(int c) throws Exception {
-        logger.debug("read done: int {} char {}", c, (char) c);
         if (c == -1) {
             logger.debug("reader EOF");
             close(true);
             return;
         }
 
-        if (c == 1003) {
+        if (c == EscapeHandlingStream.BACKSPACE) {
+            promptLine.backspace();
+            return;
+        }
+        if (c == EscapeHandlingStream.RIGHT) {
             promptLine.right();
             return;
         }
-        if (c == 1004) {
+        if (c == EscapeHandlingStream.LEFT) {
             promptLine.left();
             return;
         }
 
-        if (c == 1301 || c == '\t') {
-            addText("\r\n");
-            String command = promptLine.getCommand();
-            addText("complete in progress for: " + command + "\r\n");
-            addText(promptLine.getAll());
+        if (c == EscapeHandlingStream.TAB) {
+            new CompletionManager(promptLine, this).complete();
             return;
         }
-        if (c == '\n' || c == '\r') {
-            addText("\r\n");
-            String command = promptLine.getCommand();
-            promptLine.clear();
-            addText("running command: " + command + "\r\n");
-            addText(promptLine.getAll());
+        if (c == EscapeHandlingStream.ENTER) {
+            new CommandRunner(promptLine, this).execute();
             return;
         }
         if (c == 'X') {
@@ -141,7 +156,6 @@ public class Shell {
 
         char character = (char) c;
         promptLine.add(character);
-        addText(Character.toString(character));
     }
 
 }
