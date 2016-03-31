@@ -11,7 +11,7 @@ public class EscapeHandlingStream {
     public static final int LEFT = 1004;
     public static final int TAB = 1301;
     public static final int ENTER = 10;
-    public static final String BEEP = "\uD83D\uDD14";
+    public static final String BELL = "\uD83D\uDD14";
     private static final JascLogger logger = JascLogger.getLogger(EscapeHandlingStream.class);
     private InputStream inputStream;
 

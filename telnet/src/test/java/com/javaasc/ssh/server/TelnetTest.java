@@ -3,11 +3,10 @@ package com.javaasc.ssh.server;
 import com.javaasc.shell.api.ShellConnectionHandlerMirror;
 import com.javaasc.telnet.client.JascTelnetClient;
 import com.javaasc.telnet.server.JascTelnetServer;
-import com.javaasc.test.TestUtil;
-import org.junit.Test;
+import com.javaasc.test.JascTest;
 
-public class TelnetTest {
-    @Test(timeout = TestUtil.DEFAULT_TIMEOUT)
+public class TelnetTest extends JascTest {
+    @Override
     public void test() throws Exception {
         ShellConnectionHandlerMirror handler = new ShellConnectionHandlerMirror();
         JascTelnetServer server = new JascTelnetServer(handler);

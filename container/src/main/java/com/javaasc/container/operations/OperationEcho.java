@@ -1,7 +1,7 @@
 package com.javaasc.container.operations;
 
-import com.javaasc.entity.JascOperation;
-import com.javaasc.entity.JascOption;
+import com.javaasc.entity.api.JascOperation;
+import com.javaasc.entity.api.JascOption;
 
 public class OperationEcho {
     @SuppressWarnings("unused")

@@ -1,6 +1,6 @@
 package com.javaasc.container.operations;
 
-import com.javaasc.entity.JascOperation;
+import com.javaasc.entity.api.JascOperation;
 import com.javaasc.util.TimeUtil;
 
 public class OperationDate {

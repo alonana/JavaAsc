@@ -2,6 +2,7 @@ package com.javaasc.shell.core;
 
 import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.entity.com.javaasc.entity.core.MethodInformation;
+import com.javaasc.entity.com.javaasc.entity.core.OptionInformation;
 import com.javaasc.shell.core.command.CommandParser;
 import com.javaasc.util.JascLogger;
 
@@ -12,23 +13,22 @@ import java.util.LinkedList;
 public class CompletionManager {
     private static final JascLogger logger = JascLogger.getLogger(CompletionManager.class);
 
-    private final ShellPromptLine promptLine;
     private final Shell shell;
     private final LinkedList<String> available;
     private final CommandParser parser;
     private final String commandUntilCursor;
     private String prefix;
 
-    public CompletionManager(ShellPromptLine promptLine, Shell shell) throws Exception {
-        this.promptLine = promptLine;
+    public CompletionManager(Shell shell) throws Exception {
         this.shell = shell;
         available = new LinkedList<>();
-        String untilCursor = promptLine.getCommandUntilCursor();
+        String untilCursor = shell.getPromptLine().getCommandUntilCursor();
         commandUntilCursor = untilCursor.replaceAll("^\\s+", "");
         parser = new CommandParser(commandUntilCursor, true);
     }
 
     public void complete() throws Exception {
+        logger.debug("completing for {}", commandUntilCursor);
         if (parser.getRawArguments().size() <= 1 && !commandUntilCursor.endsWith(" ")) {
             listCommands(commandUntilCursor);
         } else if (parser.getRawArguments().size() > 0) {
@@ -37,7 +37,7 @@ public class CompletionManager {
         updateResult();
     }
 
-    private void listArguments() {
+    private void listArguments() throws Exception {
         String operationName = parser.getRawArguments().getFirst();
         MethodInformation operation = ClassAnalyzer.INSTANCE.getOperation(operationName);
         if (operation == null) {
@@ -47,14 +47,43 @@ public class CompletionManager {
         if (parser.getRawArguments().size() == 1) {
             prefix = "";
             available.addAll(operation.getOptionsNames());
+            Collections.sort(available);
         } else if (parser.getRawArguments().getLast().startsWith("-") && !commandUntilCursor.endsWith(" ")) {
             prefix = parser.getRawArguments().getLast();
             available.addAll(operation.getOptionsNames());
+            Collections.sort(available);
+        } else {
+            listValues(operation);
         }
     }
 
+    private void listValues(MethodInformation operation) throws Exception {
+        String argument;
+        if (commandUntilCursor.endsWith(" ")) {
+            if (!parser.getRawArguments().getLast().startsWith("-")) {
+                return;
+            }
+            argument = parser.getRawArguments().getLast();
+            prefix = "";
+        } else {
+            if (parser.getRawArguments().size() < 3) {
+                return;
+            }
+            prefix = parser.getRawArguments().getLast();
+            argument = parser.getRawArguments().get(parser.getRawArguments().size() - 2);
+            if (!argument.startsWith("-")) {
+                return;
+            }
+        }
+        logger.debug("check completer for argument {} prefix {}", argument, prefix);
+        OptionInformation option = operation.getOption(argument);
+        if (option == null) {
+            return;
+        }
+        available.addAll(option.getValues());
+    }
+
     private void updateResult() {
-        Collections.sort(available);
         logger.debug("available completions: " + available);
 
         Iterator<String> iterator = available.iterator();
@@ -65,13 +94,13 @@ public class CompletionManager {
             }
         }
         if (available.isEmpty()) {
-            shell.addText(EscapeHandlingStream.BEEP);
+            shell.addText(EscapeHandlingStream.BELL);
             return;
         }
         if (available.size() == 1) {
             String selected = available.getFirst() + " ";
             selected = selected.substring(prefix.length());
-            promptLine.add(selected);
+            shell.getPromptLine().add(selected);
             return;
         }
         for (String s : available) {
@@ -83,5 +112,6 @@ public class CompletionManager {
     private void listCommands(String command) {
         prefix = command;
         available.addAll(ClassAnalyzer.INSTANCE.getOperationsNames());
+        Collections.sort(available);
     }
 }

@@ -1,6 +1,6 @@
 package com.javaasc.entity.com.javaasc.entity.core;
 
-import com.javaasc.entity.JascOperation;
+import com.javaasc.entity.api.JascOperation;
 import com.javaasc.util.JascException;
 import com.javaasc.util.JascLogger;
 
@@ -22,6 +22,10 @@ public enum ClassAnalyzer {
         names.addAll(operations.keySet());
         Collections.sort(names);
         return names;
+    }
+
+    public void clear() {
+        operations.clear();
     }
 
     public void analyzeClass(Class checkedClass) {

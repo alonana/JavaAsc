@@ -4,6 +4,9 @@ import com.javaasc.shell.api.ShellConnection;
 import com.javaasc.util.JascLogger;
 
 public class Shell {
+    public static final int BEEP = 7;
+    public static final String DELETE_ADDITIONAL = " \b";
+
     private static final JascLogger logger = JascLogger.getLogger(Shell.class);
 
     private final ShellConnection connector;
@@ -20,10 +23,13 @@ public class Shell {
         promptLine = new ShellPromptLine("JASC>");
         pendingOutput = new ShellPendingOutput();
         inputStream = new EscapeHandlingStream(connector.getInputStream());
-        ShellReader reader = new ShellReader(this);
-        ShellWriter writer = new ShellWriter(this);
-        new Thread(reader).start();
-        new Thread(writer).start();
+
+        new Thread(this::readerThread).start();
+        new Thread(this::writerThread).start();
+    }
+
+    public void waitToComplete() {
+        pendingOutput.waitForEmpty();
     }
 
     public void handle() throws Exception {
@@ -37,7 +43,7 @@ public class Shell {
         }
     }
 
-    void readerThread() {
+    private void readerThread() {
         try {
             readerThreadWrapped();
         } catch (Throwable e) {
@@ -47,7 +53,7 @@ public class Shell {
         }
     }
 
-    void writerThread() {
+    private void writerThread() {
         try {
             logger.debug("writer thread starting");
             writerThreadWrapped();
@@ -67,6 +73,7 @@ public class Shell {
         }
     }
 
+    // close with onlyNotify=false is called only once from writerThread
     private void close(boolean onlyNotify) throws Exception {
         running = false;
         pendingOutput.stop();
@@ -94,8 +101,8 @@ public class Shell {
             String text = pendingOutput.getText();
             logger.debug("pending output done: {}", text);
             if (text != null) {
-                if (text.equals(EscapeHandlingStream.BEEP)) {
-                    connector.getOutputStream().write(7);
+                if (text.equals(EscapeHandlingStream.BELL)) {
+                    connector.getOutputStream().write(BEEP);
                 } else {
                     connector.getOutputStream().write(text.getBytes());
                 }
@@ -105,7 +112,7 @@ public class Shell {
         logger.debug("writer thread done");
     }
 
-    public void addText(String text) {
+    void addText(String text) {
         pendingOutput.addText(text);
     }
 
@@ -116,7 +123,7 @@ public class Shell {
             int c = inputStream.read();
             handleReadChar(c);
             // print and delete additional char to delete additional char for backspace handling
-            addText("\r" + promptLine.getAll() + " " + promptLine.getBackwardString() + '\b');
+            addText("\r" + promptLine.getAll() + DELETE_ADDITIONAL + promptLine.getBackwardString());
         }
         logger.debug("reader thread done");
     }
@@ -142,7 +149,7 @@ public class Shell {
         }
 
         if (c == EscapeHandlingStream.TAB) {
-            new CompletionManager(promptLine, this).complete();
+            new CompletionManager(this).complete();
             return;
         }
         if (c == EscapeHandlingStream.ENTER) {
@@ -159,4 +166,7 @@ public class Shell {
         promptLine.add(character);
     }
 
+    public ShellPromptLine getPromptLine() {
+        return promptLine;
+    }
 }

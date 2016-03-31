@@ -1,6 +1,6 @@
 package com.javaasc.entity.com.javaasc.entity.core;
 
-import com.javaasc.entity.JascOperation;
+import com.javaasc.entity.api.JascOperation;
 import com.javaasc.util.JascException;
 
 import java.lang.reflect.Method;
@@ -33,14 +33,12 @@ public class MethodInformation {
         for (Parameter parameter : method.getParameters()) {
             OptionInformation information = new OptionInformation(parameter, method);
             optionsSorted.add(information);
-            for (String name : information.getNames()) {
-                OptionInformation existing = options.get(name);
-                if (existing != null) {
-                    throw new JascException("duplicate options using the same name '" + name
-                            + "' located in class " + method.getDeclaringClass().getName());
-                }
-                options.put(name, information);
+            OptionInformation existing = options.get(information.getName());
+            if (existing != null) {
+                throw new JascException("duplicate options using the same name '" + information.getName()
+                        + "' located in class " + method.getDeclaringClass().getName());
             }
+            options.put(information.getName(), information);
         }
     }
 
@@ -68,5 +66,9 @@ public class MethodInformation {
 
     public Collection<String> getOptionsNames() {
         return new HashSet<>(options.keySet());
+    }
+
+    public OptionInformation getOption(String name) {
+        return options.get(name);
     }
 }

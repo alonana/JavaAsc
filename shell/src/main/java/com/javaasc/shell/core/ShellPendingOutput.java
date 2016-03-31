@@ -5,19 +5,19 @@ import com.javaasc.util.JascLogger;
 import java.util.LinkedList;
 
 public class ShellPendingOutput {
+    public static final int WAIT_TIMEOUT = 100;
     private static final JascLogger logger = JascLogger.getLogger(ShellPendingOutput.class);
-
     private final LinkedList<String> pendingText;
     private final Object mutex;
     private boolean running;
 
-    public ShellPendingOutput() {
-        this.pendingText = new LinkedList<String>();
+    ShellPendingOutput() {
+        this.pendingText = new LinkedList<>();
         mutex = new Object();
         running = true;
     }
 
-    public void addText(String text) {
+    void addText(String text) {
         logger.debug("adding text for print {}", text);
         synchronized (mutex) {
             pendingText.add(text);
@@ -25,14 +25,14 @@ public class ShellPendingOutput {
         }
     }
 
-    public String getText() {
+    String getText() {
         while (running) {
             synchronized (mutex) {
                 if (!pendingText.isEmpty()) {
                     return pendingText.removeFirst();
                 }
                 try {
-                    mutex.wait(1000);
+                    mutex.wait(WAIT_TIMEOUT);
                 } catch (InterruptedException e) {
                     // ignore
                 }
@@ -41,7 +41,22 @@ public class ShellPendingOutput {
         return null;
     }
 
-    public void stop() {
+    public void waitForEmpty() {
+        while (running) {
+            synchronized (mutex) {
+                if (pendingText.isEmpty()) {
+                    return;
+                }
+                try {
+                    mutex.wait(WAIT_TIMEOUT);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        }
+    }
+
+    void stop() {
         running = false;
     }
 }
