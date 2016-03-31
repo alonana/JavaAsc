@@ -1,9 +1,6 @@
 package com.javaasc.container;
 
-import com.javaasc.container.operations.OperationDate;
-import com.javaasc.container.operations.OperationEcho;
-import com.javaasc.container.operations.OperationInfo;
-import com.javaasc.container.operations.OperationListOperations;
+import com.javaasc.container.operations.*;
 import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.shell.api.ShellConnection;
 import com.javaasc.shell.api.ShellConnectionHandler;
@@ -26,6 +23,7 @@ public class JavaAscMain implements ShellConnectionHandler {
         ClassAnalyzer.INSTANCE.analyzeClass(OperationInfo.class);
         ClassAnalyzer.INSTANCE.analyzeClass(OperationDate.class);
         ClassAnalyzer.INSTANCE.analyzeClass(OperationEcho.class);
+        ClassAnalyzer.INSTANCE.analyzeClass(OperationCalendar.class);
 
         logger.debug("starting connectors");
         JascSshServer sshServer = new JascSshServer(this);

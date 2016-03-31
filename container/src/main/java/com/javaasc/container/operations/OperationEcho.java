@@ -6,7 +6,7 @@ import com.javaasc.entity.api.JascOption;
 public class OperationEcho {
     @SuppressWarnings("unused")
     @JascOperation()
-    public String echo(@JascOption(names = {"message"}) String message) throws Exception {
+    public String echo(@JascOption(name = "message") String message) throws Exception {
         return message;
     }
 }
