@@ -1,7 +1,7 @@
-package com.javaasc.container.operations;
+package com.javaasc.entity.entities;
 
 import com.javaasc.entity.api.JascOperation;
-import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.util.CollectionUtil;
 
 public class OperationListOperations {

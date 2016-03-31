@@ -1,4 +1,4 @@
-package com.javac.shell;
+package com.javaasc.shell;
 
 import com.javaasc.entity.api.JascOperation;
 import com.javaasc.entity.api.JascOption;

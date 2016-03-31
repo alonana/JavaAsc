@@ -1,14 +1,14 @@
 package com.javaasc.entity;
 
 import com.javaasc.entity.api.JascOperation;
-import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.ClassAnalyzer;
 import com.javaasc.test.JascTest;
 
 public class EntityTest extends JascTest {
 
     @Override
     public void test() throws Exception {
-        ClassAnalyzer.INSTANCE.analyzeClass(this.getClass());
+        ClassAnalyzer.INSTANCE.addClass(this.getClass());
     }
 
     @JascOperation()

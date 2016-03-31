@@ -11,32 +11,38 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>container</artifactId>
+    <artifactId>web</artifactId>
     <packaging>jar</packaging>
+
+    <properties>
+        <jersey-version>2.22.2</jersey-version>
+    </properties>
 
     <dependencies>
         <dependency>
-            <artifactId>shell</artifactId>
-            <groupId>com.javasc</groupId>
-            <version>${javaasc-version}</version>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-http</artifactId>
+            <version>${jersey-version}</version>
         </dependency>
         <dependency>
-            <artifactId>web</artifactId>
-            <groupId>com.javasc</groupId>
-            <version>${javaasc-version}</version>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-moxy</artifactId>
+            <version>${jersey-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-version}</version>
         </dependency>
         <dependency>
             <artifactId>entity</artifactId>
-            <groupId>com.javasc</groupId>
-            <version>${javaasc-version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>ssh</artifactId>
-            <groupId>com.javasc</groupId>
-            <version>${javaasc-version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>telnet</artifactId>
             <groupId>com.javasc</groupId>
             <version>${javaasc-version}</version>
         </dependency>

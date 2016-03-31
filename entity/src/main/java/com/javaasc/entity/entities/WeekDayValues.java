@@ -1,4 +1,4 @@
-package com.javaasc.container.operations;
+package com.javaasc.entity.entities;
 
 import com.javaasc.entity.api.JascValueEnum;
 

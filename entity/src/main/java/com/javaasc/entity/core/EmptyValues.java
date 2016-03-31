@@ -1,4 +1,4 @@
-package com.javaasc.entity.com.javaasc.entity.core;
+package com.javaasc.entity.core;
 
 import com.javaasc.entity.api.JascValues;
 

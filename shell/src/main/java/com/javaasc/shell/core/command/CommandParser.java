@@ -1,6 +1,6 @@
 package com.javaasc.shell.core.command;
 
-import com.javaasc.entity.com.javaasc.entity.core.Arguments;
+import com.javaasc.entity.core.Arguments;
 import com.javaasc.util.JascException;
 
 import java.util.LinkedList;

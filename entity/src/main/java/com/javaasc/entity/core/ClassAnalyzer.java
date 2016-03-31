@@ -1,6 +1,7 @@
-package com.javaasc.entity.com.javaasc.entity.core;
+package com.javaasc.entity.core;
 
 import com.javaasc.entity.api.JascOperation;
+import com.javaasc.entity.entities.*;
 import com.javaasc.util.JascException;
 import com.javaasc.util.JascLogger;
 
@@ -17,6 +18,13 @@ public enum ClassAnalyzer {
 
     private HashMap<String, MethodInformation> operations = new HashMap<>();
 
+    public void addPredefined() {
+        ClassAnalyzer.INSTANCE.addClass(OperationListOperations.class);
+        ClassAnalyzer.INSTANCE.addClass(OperationInfo.class);
+        ClassAnalyzer.INSTANCE.addClass(OperationDate.class);
+        ClassAnalyzer.INSTANCE.addClass(OperationEcho.class);
+        ClassAnalyzer.INSTANCE.addClass(OperationCalendar.class);
+    }
     public List<String> getOperationsNames() {
         List<String> names = new LinkedList<String>();
         names.addAll(operations.keySet());
@@ -28,7 +36,7 @@ public enum ClassAnalyzer {
         operations.clear();
     }
 
-    public void analyzeClass(Class checkedClass) {
+    public void addClass(Class checkedClass) {
         for (Method method : checkedClass.getMethods()) {
             if (method.isAnnotationPresent(JascOperation.class)) {
                 addMethod(method);

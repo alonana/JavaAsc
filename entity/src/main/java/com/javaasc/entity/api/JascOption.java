@@ -1,6 +1,6 @@
 package com.javaasc.entity.api;
 
-import com.javaasc.entity.com.javaasc.entity.core.EmptyValues;
+import com.javaasc.entity.core.EmptyValues;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

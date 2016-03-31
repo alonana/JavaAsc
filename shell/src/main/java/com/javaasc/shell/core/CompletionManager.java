@@ -1,8 +1,8 @@
 package com.javaasc.shell.core;
 
-import com.javaasc.entity.com.javaasc.entity.core.ClassAnalyzer;
-import com.javaasc.entity.com.javaasc.entity.core.MethodInformation;
-import com.javaasc.entity.com.javaasc.entity.core.OptionInformation;
+import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.MethodInformation;
+import com.javaasc.entity.core.OptionInformation;
 import com.javaasc.shell.core.command.CommandParser;
 import com.javaasc.util.JascLogger;
 

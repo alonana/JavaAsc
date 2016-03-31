@@ -1,8 +1,11 @@
-package com.javaasc.entity.com.javaasc.entity.core;
+package com.javaasc.entity.core;
 
 import com.javaasc.util.JascException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Arguments {
     private String command;

@@ -23,6 +23,7 @@
         <module>shell</module>
         <module>entity</module>
         <module>container</module>
+        <module>web</module>
     </modules>
 
 </project>
