@@ -1,6 +1,6 @@
 package com.javaasc.web;
 
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.test.JascTest;
 import com.javaasc.util.JascException;
 import com.javaasc.web.client.WebClient;
@@ -11,7 +11,7 @@ public class JascWebServerTest extends JascTest {
 
     @Override
     public void test() throws Exception {
-        ClassAnalyzer.INSTANCE.addPredefined();
+        JascEntities.INSTANCE.addPredefined();
         JascWebServer server = new JascWebServer();
         server.start();
 

@@ -1,7 +1,7 @@
 package com.javaasc.web.server;
 
 import com.javaasc.entity.core.Arguments;
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.util.CollectionUtil;
 
 import javax.ws.rs.GET;
@@ -18,7 +18,7 @@ public class RestEntity {
     @Path("/all")
     @Produces(MediaType.TEXT_PLAIN)
     public String getAll() {
-        List<String> names = ClassAnalyzer.INSTANCE.getOperationsNames();
+        List<String> names = JascEntities.INSTANCE.getOperationsNames();
         return CollectionUtil.getNiceList(names);
     }
 
@@ -29,6 +29,6 @@ public class RestEntity {
         List<String> args = new LinkedList<>();
         args.add(entity);
         Arguments arguments = new Arguments(args);
-        return ClassAnalyzer.INSTANCE.execute(arguments);
+        return JascEntities.INSTANCE.execute(arguments);
     }
 }

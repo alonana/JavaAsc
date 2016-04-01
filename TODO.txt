@@ -1,0 +1,16 @@
+TODO
+====
+
+- convert parameters from shell to correct type (Integer/what ever we want to support)
+
+- allow receiving Integer, String, Boolean
+
+- handle receiving parameters in REST
+
+- allow receiving List of the types above, both CLI and REST
+
+- handle parameter optional/mandatory
+
+- handle return types: String/JSON for both CLI and REST
+
+- CLI ongoing commands that print output even after completion

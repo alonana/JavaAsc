@@ -9,13 +9,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 public class MethodInformation {
+    public static final String ERROR_RUNNING = "error running ";
+
     private Method method;
     private String name;
     private String description;
-    private HashMap<String, OptionInformation> options;
-    private LinkedList<OptionInformation> optionsSorted;
+    private HashMap<String, ParameterInformation> parameters;
+    private LinkedList<ParameterInformation> parametersSorted;
 
     public MethodInformation(Method method) {
         this.method = method;
@@ -28,17 +31,17 @@ public class MethodInformation {
         if (description.equals(JascOperation.EMPTY)) {
             description = null;
         }
-        options = new HashMap<>();
-        optionsSorted = new LinkedList<>();
-        for (Parameter parameter : method.getParameters()) {
-            OptionInformation information = new OptionInformation(parameter, method);
-            optionsSorted.add(information);
-            OptionInformation existing = options.get(information.getName());
+        parameters = new HashMap<>();
+        parametersSorted = new LinkedList<>();
+        for (Parameter methodParameter : method.getParameters()) {
+            ParameterInformation parameter = new ParameterInformation(methodParameter, this);
+            parametersSorted.add(parameter);
+            ParameterInformation existing = parameters.get(parameter.getName(false));
             if (existing != null) {
-                throw new JascException("duplicate options using the same name '" + information.getName()
-                        + "' located in class " + method.getDeclaringClass().getName());
+                throw new JascException("duplicate options using the same name '" + parameter.getName(false)
+                        + "' located in " + getFullName());
             }
-            options.put(information.getName(), information);
+            parameters.put(parameter.getName(false), parameter);
         }
     }
 
@@ -50,25 +53,45 @@ public class MethodInformation {
         return name;
     }
 
+    public String getFullName() {
+        return method.getDeclaringClass().getName() + "." + method.getName() + "()";
+    }
+
     public String execute(Arguments arguments) throws Exception {
         arguments.usageReset();
-        Object[] parameters = new Object[optionsSorted.size()];
+        Object[] parameters = new Object[parametersSorted.size()];
         int i = 0;
-        for (OptionInformation information : optionsSorted) {
-            String value = information.getValue(arguments);
+        for (ParameterInformation information : parametersSorted) {
+            Object value = information.getValue(arguments);
             parameters[i++] = value;
         }
         arguments.usageVerify();
-        Object o = method.getDeclaringClass().newInstance();
-        Object result = method.invoke(o, parameters);
-        return result.toString();
+        try {
+            Object o = method.getDeclaringClass().newInstance();
+            Object result = method.invoke(o, parameters);
+            if (result == null) {
+                return null;
+            }
+            return result.toString();
+        } catch (Throwable e) {
+            throw new JascException(ERROR_RUNNING + getFullName(), e);
+        }
     }
 
-    public Collection<String> getOptionsNames() {
-        return new HashSet<>(options.keySet());
+    public Collection<String> getParametersNames(boolean withDash) {
+        if (withDash) {
+            return parameters.keySet().stream().map(e -> "-" + e).collect(Collectors.toList());
+        }
+        return new HashSet<>(parameters.keySet());
     }
 
-    public OptionInformation getOption(String name) {
-        return options.get(name);
+    public ParameterInformation getParameter(String name, boolean withDash) {
+        if (withDash) {
+            if (name.isEmpty()) {
+                return null;
+            }
+            name = name.substring(1);
+        }
+        return parameters.get(name);
     }
 }

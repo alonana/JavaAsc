@@ -1,7 +1,7 @@
 package com.javaasc.shell.core;
 
 import com.javaasc.entity.core.Arguments;
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.shell.core.command.CommandParser;
 import com.javaasc.util.JascException;
 import com.javaasc.util.JascLogger;
@@ -27,7 +27,7 @@ public class CommandRunner {
         }
         try {
             Arguments arguments = new CommandParser(commandLine, false).getArguments();
-            result = ClassAnalyzer.INSTANCE.execute(arguments) + "\r\n";
+            result = JascEntities.INSTANCE.execute(arguments) + "\r\n";
         } catch (Exception e) {
             logger.warn("command " + commandLine + " run failed", e);
             result = JascException.getStackTrace(e);

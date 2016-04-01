@@ -1,14 +1,14 @@
 package com.javac.container;
 
 import com.javaasc.container.JavaAscMain;
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.telnet.client.JascTelnetClient;
 import com.javaasc.test.JascTest;
 import com.javaasc.util.StreamUtil;
 
 public class JavaAscMainTest extends JascTest {
     public void test() throws Exception {
-        ClassAnalyzer.INSTANCE.addPredefined();
+        JascEntities.INSTANCE.addPredefined();
         new JavaAscMain().run();
 
         print("client connecting");

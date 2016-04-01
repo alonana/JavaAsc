@@ -4,13 +4,18 @@ import com.javaasc.util.JascException;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Arguments {
+    public static final String INVALID_ARGUMENTS = "invalid arguments: ";
     private String command;
-    private HashMap<String, LinkedList<String>> arguments;
+    private HashMap<String, Object> arguments;
     private HashSet<String> notUsedArguments;
+
+    public Arguments(String command) throws Exception {
+        arguments = new HashMap<>();
+        this.command = command;
+    }
 
     public Arguments(List<String> rawArgs) throws Exception {
         arguments = new HashMap<>();
@@ -22,33 +27,24 @@ public class Arguments {
         while (argumentIndex < rawArgs.size()) {
             String argumentName = rawArgs.get(argumentIndex++);
             String argumentValue = rawArgs.get(argumentIndex++);
-            setArgument(argumentName, argumentValue);
+            addParameterValue(argumentName, argumentValue);
         }
     }
 
-    private void setArgument(String argumentName, String argumentValue) throws Exception {
-        LinkedList<String> values = arguments.get(argumentName);
-        if (values == null) {
-            values = new LinkedList<>();
-            arguments.put(argumentName, values);
+    public void addParameterValue(String argumentName, Object argumentValue) throws Exception {
+        Object existing = arguments.get(argumentName);
+        if (existing != null) {
+            throw new JascException("argument " + argumentName + " already specified");
         }
-        values.add(argumentValue);
+        arguments.put(argumentName, argumentValue);
     }
 
     public String getCommand() {
         return command;
     }
 
-    public List<String> getArgumentList(String argumentName) {
+    public Object getArgumentValue(String argumentName) {
         return arguments.get(argumentName);
-    }
-
-    public String getArgumentSimple(String argumentName) {
-        List<String> values = getArgumentList(argumentName);
-        if (values == null) {
-            return null;
-        }
-        return values.get(0);
     }
 
     public void usageReset() {
@@ -63,7 +59,7 @@ public class Arguments {
         if (notUsedArguments.isEmpty()) {
             return;
         }
-        throw new JascException("invalid arguments: " + notUsedArguments);
+        throw new JascException(INVALID_ARGUMENTS + notUsedArguments);
     }
 
     @Override

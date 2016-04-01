@@ -11,22 +11,22 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public enum ClassAnalyzer {
+public enum JascEntities {
     INSTANCE;
 
-    private static final JascLogger logger = JascLogger.getLogger(ClassAnalyzer.class);
-
+    public static final String COMMAND_NOT_FOUND = "command not found: ";
+    private static final JascLogger logger = JascLogger.getLogger(JascEntities.class);
     private HashMap<String, MethodInformation> operations = new HashMap<>();
 
     public void addPredefined() {
-        ClassAnalyzer.INSTANCE.addClass(OperationListOperations.class);
-        ClassAnalyzer.INSTANCE.addClass(OperationInfo.class);
-        ClassAnalyzer.INSTANCE.addClass(OperationDate.class);
-        ClassAnalyzer.INSTANCE.addClass(OperationEcho.class);
-        ClassAnalyzer.INSTANCE.addClass(OperationCalendar.class);
+        JascEntities.INSTANCE.addClass(OperationListOperations.class);
+        JascEntities.INSTANCE.addClass(OperationInfo.class);
+        JascEntities.INSTANCE.addClass(OperationDate.class);
+        JascEntities.INSTANCE.addClass(OperationEcho.class);
+        JascEntities.INSTANCE.addClass(OperationCalendar.class);
     }
     public List<String> getOperationsNames() {
-        List<String> names = new LinkedList<String>();
+        List<String> names = new LinkedList<>();
         names.addAll(operations.keySet());
         Collections.sort(names);
         return names;
@@ -61,7 +61,7 @@ public enum ClassAnalyzer {
         String command = arguments.getCommand();
         MethodInformation methodInformation = operations.get(command);
         if (methodInformation == null) {
-            throw new JascException("command not found: " + command);
+            throw new JascException(COMMAND_NOT_FOUND + command);
         }
         return methodInformation.execute(arguments);
     }

@@ -1,8 +1,8 @@
 package com.javaasc.shell.core;
 
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.entity.core.MethodInformation;
-import com.javaasc.entity.core.OptionInformation;
+import com.javaasc.entity.core.ParameterInformation;
 import com.javaasc.shell.core.command.CommandParser;
 import com.javaasc.util.JascLogger;
 
@@ -39,18 +39,18 @@ public class CompletionManager {
 
     private void listArguments() throws Exception {
         String operationName = parser.getRawArguments().getFirst();
-        MethodInformation operation = ClassAnalyzer.INSTANCE.getOperation(operationName);
+        MethodInformation operation = JascEntities.INSTANCE.getOperation(operationName);
         if (operation == null) {
             return;
         }
 
         if (parser.getRawArguments().size() == 1) {
             prefix = "";
-            available.addAll(operation.getOptionsNames());
+            available.addAll(operation.getParametersNames(true));
             Collections.sort(available);
         } else if (parser.getRawArguments().getLast().startsWith("-") && !commandUntilCursor.endsWith(" ")) {
             prefix = parser.getRawArguments().getLast();
-            available.addAll(operation.getOptionsNames());
+            available.addAll(operation.getParametersNames(true));
             Collections.sort(available);
         } else {
             listValues(operation);
@@ -76,7 +76,7 @@ public class CompletionManager {
             }
         }
         logger.debug("check completer for argument {} prefix {}", argument, prefix);
-        OptionInformation option = operation.getOption(argument);
+        ParameterInformation option = operation.getParameter(argument, true);
         if (option == null) {
             return;
         }
@@ -111,7 +111,7 @@ public class CompletionManager {
 
     private void listCommands(String command) {
         prefix = command;
-        available.addAll(ClassAnalyzer.INSTANCE.getOperationsNames());
+        available.addAll(JascEntities.INSTANCE.getOperationsNames());
         Collections.sort(available);
     }
 }

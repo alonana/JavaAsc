@@ -1,6 +1,6 @@
 package com.javaasc.shell;
 
-import com.javaasc.entity.core.ClassAnalyzer;
+import com.javaasc.entity.core.JascEntities;
 import com.javaasc.shell.core.CompletionManager;
 import com.javaasc.shell.core.Shell;
 import com.javaasc.test.JascTest;
@@ -111,8 +111,8 @@ public class CompletionTest extends JascTest {
     }
 
     private void check(String input, String expectedOutput, String expectedPrompt) throws Exception {
-        ClassAnalyzer.INSTANCE.clear();
-        ClassAnalyzer.INSTANCE.addClass(OperationStub.class);
+        JascEntities.INSTANCE.clear();
+        JascEntities.INSTANCE.addClass(OperationStub.class);
         ShellConnectionStub connectionStub = new ShellConnectionStub();
         connectionStub.getStdinWriter().write(input.getBytes());
 
