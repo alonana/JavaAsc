@@ -14,3 +14,4 @@ TODO
 - handle return types: String/JSON for both CLI and REST
 
 - CLI ongoing commands that print output even after completion
+
