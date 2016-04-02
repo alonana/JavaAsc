@@ -4,6 +4,6 @@ import com.javaasc.entity.api.JascOperation;
 
 public class EntityWithoutParemeterAnnotation {
     @JascOperation()
-    public void methodWithArgumentString(String input1) throws Exception {
+    public void m(String input1) throws Exception {
     }
 }

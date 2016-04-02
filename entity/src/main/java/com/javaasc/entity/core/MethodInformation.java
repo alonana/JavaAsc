@@ -33,8 +33,11 @@ public class MethodInformation {
         }
         parameters = new HashMap<>();
         parametersSorted = new LinkedList<>();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        int i = 0;
         for (Parameter methodParameter : method.getParameters()) {
-            ParameterInformation parameter = new ParameterInformation(methodParameter, this);
+            Class<?> parameterType = parameterTypes[i++];
+            ParameterInformation parameter = new ParameterInformation(methodParameter, parameterType, this);
             parametersSorted.add(parameter);
             ParameterInformation existing = parameters.get(parameter.getName(false));
             if (existing != null) {

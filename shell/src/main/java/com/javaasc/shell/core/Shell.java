@@ -6,6 +6,7 @@ import com.javaasc.util.JascLogger;
 public class Shell {
     public static final int BEEP = 7;
     public static final String DELETE_ADDITIONAL = " \b";
+    public static final String PROMPT = "JASC>";
 
     private static final JascLogger logger = JascLogger.getLogger(Shell.class);
 
@@ -20,7 +21,7 @@ public class Shell {
     public Shell(ShellConnection connector) throws Exception {
         this.connector = connector;
         mutex = new Object();
-        promptLine = new ShellPromptLine("JASC>");
+        promptLine = new ShellPromptLine(PROMPT);
         pendingOutput = new ShellPendingOutput();
         inputStream = new EscapeHandlingStream(connector.getInputStream());
 

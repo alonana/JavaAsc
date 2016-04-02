@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface JascOption {
-    static String EMPTY = "overcome java non support for null default";
+public @interface JascParameter {
+    String EMPTY = "overcome java non support for null default";
 
     String name();
 

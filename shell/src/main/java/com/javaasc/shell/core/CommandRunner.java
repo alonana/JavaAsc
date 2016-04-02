@@ -22,12 +22,16 @@ public class CommandRunner {
         String result;
         String commandLine = promptLine.getCommandLine().trim();
         promptLine.clear();
-        if (commandLine.isEmpty()){
+        if (commandLine.isEmpty()) {
             return;
         }
         try {
             Arguments arguments = new CommandParser(commandLine, false).getArguments();
-            result = JascEntities.INSTANCE.execute(arguments) + "\r\n";
+            result = JascEntities.INSTANCE.execute(arguments);
+            if (result == null) {
+                result = "";
+            }
+            result += "\r\n";
         } catch (Exception e) {
             logger.warn("command " + commandLine + " run failed", e);
             result = JascException.getStackTrace(e);

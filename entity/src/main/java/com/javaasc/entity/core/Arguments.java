@@ -8,6 +8,8 @@ import java.util.List;
 
 public class Arguments {
     public static final String INVALID_ARGUMENTS = "invalid arguments: ";
+    public static final String ALREADY_SPECIFIED = " already specified";
+
     private String command;
     private HashMap<String, Object> arguments;
     private HashSet<String> notUsedArguments;
@@ -32,9 +34,13 @@ public class Arguments {
     }
 
     public void addParameterValue(String argumentName, Object argumentValue) throws Exception {
+        if (!argumentName.startsWith("-")) {
+            throw new JascException("arguments must start with '-' character");
+        }
+        argumentName = argumentName.substring(1);
         Object existing = arguments.get(argumentName);
         if (existing != null) {
-            throw new JascException("argument " + argumentName + " already specified");
+            throw new JascException("argument " + argumentName + ALREADY_SPECIFIED);
         }
         arguments.put(argumentName, argumentValue);
     }
