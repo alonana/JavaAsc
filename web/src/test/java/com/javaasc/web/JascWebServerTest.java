@@ -16,19 +16,27 @@ public class JascWebServerTest extends JascTest {
         server.start();
 
         client = new WebClient(false);
-        check("test/ping");
+        checkGet("test/ping");
+        checkPost("test/echo", "{a:5}");
         try {
-            check("test/error");
+            checkGet("test/error");
         } catch (Throwable e) {
             print("expected error: " + JascException.getStackTrace(e));
         }
-        check("entities/all");
-        check("entities/date");
+
+        checkGet("entities/all");
+        checkPost("entities/date", "{}");
+        checkPost("entities/echo", "{message:Hello}");
         server.stop();
     }
 
-    private void check(String path) {
+    private void checkGet(String path) {
         String result = client.getSimple(JascWebServer.URL, path);
+        print("result for path " + path + " is: " + result);
+    }
+
+    private void checkPost(String path, String payload) {
+        String result = client.postSimple(JascWebServer.URL, path, payload);
         print("result for path " + path + " is: " + result);
     }
 }

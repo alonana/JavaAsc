@@ -87,7 +87,7 @@ public class CommandParser {
     }
 
     public Arguments getArguments() throws Exception {
-        return new Arguments(rawArguments);
+        return new Arguments(rawArguments, true);
     }
 
     @Override

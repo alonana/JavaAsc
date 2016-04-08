@@ -57,6 +57,11 @@
             <version>${jersey-version}</version>
         </dependency>
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160212</version>
+        </dependency>
+        <dependency>
             <artifactId>entity</artifactId>
             <groupId>com.javasc</groupId>
             <version>${javaasc-version}</version>

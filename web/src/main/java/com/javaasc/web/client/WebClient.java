@@ -6,6 +6,7 @@ import org.glassfish.jersey.filter.LoggingFilter;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -29,8 +30,27 @@ public class WebClient {
                 .get();
     }
 
+    public Response post(String url, String path, String payLoad) {
+        return client
+                .target(url)
+                .path(path)
+                .request()
+                .accept(MediaType.APPLICATION_JSON_TYPE, MediaType.TEXT_PLAIN_TYPE)
+                .post(Entity.json(payLoad), Response.class);
+    }
+
     public String getSimple(String url, String path) {
         Response response = get(url, path);
+        String result = response.readEntity(String.class);
+        if (response.getStatus() != 200) {
+            throw new JascException("response error " + response.getStatus() + ":" + response.getStatusInfo() +
+                    " " + result);
+        }
+        return result;
+    }
+
+    public String postSimple(String url, String path, String payload) {
+        Response response = post(url, path, payload);
         String result = response.readEntity(String.class);
         if (response.getStatus() != 200) {
             throw new JascException("response error " + response.getStatus() + ":" + response.getStatusInfo() +

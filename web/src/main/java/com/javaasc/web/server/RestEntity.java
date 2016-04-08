@@ -3,13 +3,10 @@ package com.javaasc.web.server;
 import com.javaasc.entity.core.Arguments;
 import com.javaasc.entity.core.JascEntities;
 import com.javaasc.util.CollectionUtil;
+import org.json.JSONObject;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.LinkedList;
 import java.util.List;
 
 @Path("entities")
@@ -22,13 +19,18 @@ public class RestEntity {
         return CollectionUtil.getNiceList(names);
     }
 
-    @GET
-    @Path("{entity}")
+    @POST
+    @Path("/{entity}")
     @Produces(MediaType.TEXT_PLAIN)
-    public String get(@PathParam("entity") String entity) throws Exception {
-        List<String> args = new LinkedList<>();
-        args.add(entity);
-        Arguments arguments = new Arguments(args);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String get(@PathParam("entity") String entity, String payload) throws Exception {
+        Arguments arguments = new Arguments(entity);
+
+        JSONObject root = new JSONObject(payload);
+        for (String key : root.keySet()) {
+            String value = root.getString(key);
+            arguments.addParameterValue(key, value, false);
+        }
         return JascEntities.INSTANCE.execute(arguments);
     }
 }

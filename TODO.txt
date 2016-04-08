@@ -1,8 +1,6 @@
 TODO
 ====
 
-- handle receiving parameters in REST
-
 - allow receiving List of the types above, both CLI and REST
 
 - handle parameter optional/mandatory
@@ -14,3 +12,5 @@ TODO
 - handle partial completion of  commands: a<tab> with options aaa1, aaa2 --> aaa
 
 - support services injection & dependencies handling
+
+- create CLI & REST help (consider swagger)

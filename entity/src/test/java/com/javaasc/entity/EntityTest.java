@@ -41,31 +41,31 @@ public class EntityTest extends JascTest {
 
         checkWithExpectedError(Arguments.ALREADY_SPECIFIED, () -> {
             Arguments args = new Arguments("methodWithArgumentString");
-            args.addParameterValue("input1", "value1");
-            args.addParameterValue("input1", "value2");
+            args.addParameterValue("input1", "value1", false);
+            args.addParameterValue("input1", "value2", false);
             manager.execute(args);
         });
 
         arguments = new Arguments("methodWithArgumentString");
-        arguments.addParameterValue("input1", "value1");
+        arguments.addParameterValue("input1", "value1", false);
         manager.execute(arguments);
 
         arguments = new Arguments("methodWithArgumentInteger");
-        arguments.addParameterValue("input1", 4);
+        arguments.addParameterValue("input1", 4, false);
         manager.execute(arguments);
 
         arguments = new Arguments("methodWithArgumentInteger");
-        arguments.addParameterValue("input1", "4");
+        arguments.addParameterValue("input1", "4", false);
         manager.execute(arguments);
 
         checkWithExpectedError(ParameterInformation.WRONG_CLASS, () -> {
             Arguments args = new Arguments("methodWithArgumentInteger");
-            args.addParameterValue("input1", 4L);
+            args.addParameterValue("input1", 4L, false);
             manager.execute(args);
         });
 
         arguments = new Arguments("methodWithArgumentBoolean");
-        arguments.addParameterValue("input1", true);
+        arguments.addParameterValue("input1", true, false);
         manager.execute(arguments);
 
 

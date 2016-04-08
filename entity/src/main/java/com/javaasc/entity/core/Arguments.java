@@ -19,7 +19,7 @@ public class Arguments {
         this.command = command;
     }
 
-    public Arguments(List<String> rawArgs) throws Exception {
+    public Arguments(List<String> rawArgs, boolean startWithDash) throws Exception {
         arguments = new HashMap<>();
         if (rawArgs.isEmpty()) {
             throw new JascException("empty arguments");
@@ -29,15 +29,17 @@ public class Arguments {
         while (argumentIndex < rawArgs.size()) {
             String argumentName = rawArgs.get(argumentIndex++);
             String argumentValue = rawArgs.get(argumentIndex++);
-            addParameterValue(argumentName, argumentValue);
+            addParameterValue(argumentName, argumentValue, startWithDash);
         }
     }
 
-    public void addParameterValue(String argumentName, Object argumentValue) throws Exception {
-        if (!argumentName.startsWith("-")) {
-            throw new JascException("arguments must start with '-' character");
+    public void addParameterValue(String argumentName, Object argumentValue, boolean startWithDash) throws Exception {
+        if (startWithDash) {
+            if (!argumentName.startsWith("-")) {
+                throw new JascException("arguments must start with '-' character");
+            }
+            argumentName = argumentName.substring(1);
         }
-        argumentName = argumentName.substring(1);
         Object existing = arguments.get(argumentName);
         if (existing != null) {
             throw new JascException("argument " + argumentName + ALREADY_SPECIFIED);
